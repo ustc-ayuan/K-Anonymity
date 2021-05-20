@@ -5,7 +5,6 @@ import time
 # time record
 time_start=time.time()
 
-
 # para init
 k = 10
 maxSup = 20
@@ -140,7 +139,7 @@ def LossMetric():
     return (totalLoss, ageLoss , maritalLoss , genderLoss , raceLoss)
 ##########################Func Finish###############################
 
-# find vector(samarati alg , First-Fix)
+# find vector(samarati alg , Best-Fix)
 low = 0
 high = len(vecDict)-1
 #init sol as completely generalization
