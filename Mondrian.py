@@ -8,7 +8,7 @@ import random
 time_start=time.time()
 
 #QI={age, education_num}
-# define age:0 ; education_num:1 
+# define age:1 ; education_num:0 
 # para init
 k = 10
 
@@ -34,8 +34,8 @@ def Mondrian(lAge:int,hAge:int,lEdu:int,hEdu:int):
     randomFlagForAge = False
     Agelist = []
     Edulist = []
-    #"""
-    # M1: 0.3-2.0 S per time(CPU branch pridict) too slow
+
+    # M1: 0.3-2.0 S per time ( maybe exist CPU branch pridict) too slow
     ### bottle neck is create Agelist & Edulist 
     #for i in range(0,len(GenData)):
     #    if GenData.loc[i,"age"]>= lAge and GenData.loc[i,"age"]<= hAge and GenData.loc[i,"education_num"]>= lEdu and GenData.loc[i,"education_num"]<= hEdu:
@@ -43,6 +43,7 @@ def Mondrian(lAge:int,hAge:int,lEdu:int,hEdu:int):
         if GlobalAgeList[i]>= lAge and GlobalAgeList[i]<= hAge and GlobalEduList[i]>= lEdu and GlobalEduList[i]<= hEdu:
             Agelist.append(GlobalAgeList[i])
             Edulist.append(GlobalEduList[i])
+    
     """
     # M2: 0.5S per time (more stable then M1) as slow as M1 
     ### bottle neck is create Agelist & Edulist
@@ -71,12 +72,21 @@ def Mondrian(lAge:int,hAge:int,lEdu:int,hEdu:int):
     """
     
     # partition    
+    AgeisAble = False
+    median = int(np.nanmedian(Agelist))
+    if sum(i > median  for i in Agelist) >= k and sum(i <= median  for i in Agelist) >= k:
+        AgeisAble = True
+    median = int(np.nanmedian(Edulist))
+    EduisAble = False
+    if sum(i > median  for i in Edulist) >= k and sum(i <= median  for i in Edulist) >= k:
+        EduisAble = True
+    if AgeisAble == False and EduisAble == False:
+        return
     randomNum = random.randint(0,100)
-    if randomNum%2:# Age
+    if AgeisAble == True and (EduisAble == False or randomNum%2):# Age
         if(not Agelist):
             return
         median = int(np.nanmedian(Agelist))
-        randomFlagForAge = True
         if sum(i > median  for i in Agelist) >= k and sum(i <= median  for i in Agelist) >= k:
             partition.remove(((lAge,hAge),(lEdu,hEdu)))
             partition.append(((lAge,median),(lEdu,hEdu)))
@@ -84,7 +94,9 @@ def Mondrian(lAge:int,hAge:int,lEdu:int,hEdu:int):
             Mondrian(lAge,median,lEdu,hEdu)
             Mondrian(median+1,hAge,lEdu,hEdu)
             return             
-    elif randomFlagForAge or randomNum!=1:# Edu
+    else:# Edu
+        if(EduisAble == False):
+            return
         if(not Edulist):
             return
         median = int(np.nanmedian(Edulist))
