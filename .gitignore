@@ -4,4 +4,4 @@
 .DS_Store
 figs
 MondrianPlot.py
-.pdf
+*.pdf
