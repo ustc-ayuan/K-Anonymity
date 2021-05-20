@@ -6,8 +6,8 @@ import time
 time_start=time.time()
 
 # para init
-k = 10
-maxSup = 20
+k = 50
+maxSup = 200
 
 # read adult as .csv , get data whose type is dataframe
 data = pd.read_csv('adult.csv',encoding = 'GBK', engine="python",header = None)
@@ -24,7 +24,7 @@ for ageGenLayer in range(0,5):
     for genderGenLayer in range(0,2):
         for raceGenLayer in range(0,2):
             for maritalStatusGenLayer in range(0,3):
-                vecDict.setdefault(ageGenLayer+genderGenLayer+maritalStatusGenLayer+raceGenLayer,[]).append((ageGenLayer,genderGenLayer,raceGenLayer,maritalStatusGenLayer))
+                vecDict.setdefault(ageGenLayer+genderGenLayer+maritalStatusGenLayer+raceGenLayer,[]).append((genderGenLayer,ageGenLayer,raceGenLayer,maritalStatusGenLayer))
 
 # generalization rules (key is a tuple like (attribute,GenLayer) ;value is genAttribute)
 # Generalization rules for Race (only 2 layer)
@@ -57,8 +57,8 @@ def generalization(vec:tuple,whetherSup:bool):
     isSatisfies = False
     TmpGenData =  pd.DataFrame.copy(data)
     AlreadySup = 0
-    genderLayer = vec[1]
-    ageLayer = vec[0]
+    genderLayer = vec[0]
+    ageLayer = vec[1]
     raceLayer = vec[2]
     maritalStatusLayer = vec[3]
     SupGenData = pd.DataFrame(columns = ["age", "work_class" ,"final_weight" ,"education" ,"education_num" ,"marital_status" ,"occupation" ,"relationship" ,"race" ,"sex" ,"capital_gain" ,"capital_loss" ,"hours_per_week" ,"native_country" ,"class"])
@@ -177,7 +177,7 @@ DelData.to_csv("SamaratiAddDelData.csv")
 
 # time record
 time_end=time.time()
-print("(age,gender,race,ms)")
+print("(gender,age,race,ms)")
 print(sol)
 print("loss:",(minLoss,minageLoss,mingenderLoss,minraceLoss,minmaritalLoss))
 print("DataNum:",DataTupleNum)
