@@ -7,7 +7,7 @@ time_start=time.time()
 
 # para init
 k = 10
-maxSup = 20
+maxSup = 80
 
 # read adult as .csv , get data whose type is dataframe
 data = pd.read_csv('adult.csv',encoding = 'GBK', engine="python",header = None)
@@ -121,23 +121,24 @@ generalization(sol,True)
 
 #compute Loss
 #Loss computation
-RaceLossDict = {"Other":0,"Amer-Indian-Eskimo":0,"Black":0,"White":0,"Asian-Pac-Islander":0,"*":1,"-":1}
-MaritalLossDict = {"Married-spouse-absent":0,"Widowed":0,"Separated":0,"Divorced":0,"Married-AF-spouse":0,
-"Married-civ-spouse":0,"Never-married":0,"Married":1/6,"NM":0,"alone":1/6,"leave":1/6,"*":1,"-":0}
-GenderLossDict = {"Male":0,"Female":0,"*":1,"-":1}
+# prepare for compute Loss 
+RaceLossDict = {"Other":0.0,"Amer-Indian-Eskimo":0.0,"Black":0.0,"White":0.0,"Asian-Pac-Islander":0.0,"*":1.0,"-":1.0}
+MaritalLossDict = {"Married-spouse-absent":0.0,"Widowed":0.0,"Separated":0.0,"Divorced":0.0,"Married-AF-spouse":0.0,
+"Married-civ-spouse":0.0,"Never-married":0.0,"Married":1.0/6,"NM":0.0,"alone":1.0/6,"leave":1.0/6,"*":1.0,"-":1.0}
+GenderLossDict = {"Male":0.0,"Female":0.0,"*":1.0,"-":1.0}
 # recognize age as categorical attribute
 AgeSet = set(data['age'].values.tolist())
 AgeNum = len(AgeSet)
-AgeLossDict = {"*":1,"-":1}
+AgeLossDict = {"*":1.0,"-":1.0}
 for element in AgeSet:
-    AgeLossDict[element] = 0
+    AgeLossDict[element] = 0.0
 for j in range(1,4):
     for l in range(0,int(100/stride[j])):
+        tmpcnt = 0
         for element in AgeSet:
-            tmpcnt = 0
             if element>=l*stride[j] and element<(l+1)*stride[j]:
                 tmpcnt += 1
-            AgeLossDict["("+str(l*stride[j])+","+str((l+1)*stride[j]-1)+")"] = (tmpcnt-1)/(AgeNum-1)
+        AgeLossDict["("+str(l*stride[j])+","+str((l+1)*stride[j]-1)+")"] = (tmpcnt-1)/(AgeNum-1)
 
 agegroups = GenData.groupby(['age'])
 ageLoss = 0.0
