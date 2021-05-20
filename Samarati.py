@@ -5,7 +5,6 @@ import time
 # time record
 time_start=time.time()
 
-
 # para init
 k = 10
 maxSup = 20
